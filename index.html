@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MissPompadour — AI Transformation Strategy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#6366f1;--primary-dark:#4338ca;--primary-darker:#312e81;--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--accent:#818cf8;--success:#22c55e;--warn:#f59e0b;--danger:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+.container{max-width:1100px;margin:0 auto;padding:20px 30px 60px}
+
+/* Cover */
+.cover{text-align:center;padding:80px 20px 60px;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4338ca 70%,#6366f1 100%);color:#fff;border-radius:0 0 40px 40px;margin-bottom:50px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:30px 30px;animation:moveDots 20s linear infinite}
+@keyframes moveDots{0%{transform:translate(0,0)}100%{transform:translate(30px,30px)}}
+.cover h1{font-size:42px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;position:relative}
+.cover .subtitle{font-size:20px;font-weight:400;opacity:.85;margin-bottom:30px}
+.cover .meta{font-size:13px;opacity:.6}
+.cover .meta span{margin:0 12px}
+
+/* Nav */
+.toc{background:var(--card);border-radius:16px;padding:30px 36px;margin-bottom:36px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border)}
+.toc h2{font-size:18px;color:var(--primary-dark);margin-bottom:16px}
+.toc ol{padding-left:22px;columns:2;column-gap:40px}
+.toc li{margin-bottom:8px;font-size:14px;break-inside:avoid}
+.toc a{color:var(--primary);text-decoration:none;font-weight:500}
+.toc a:hover{text-decoration:underline}
+
+/* Sections */
+.section{background:var(--card);border-radius:16px;padding:36px 40px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border);opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+.section.visible{opacity:1;transform:translateY(0)}
+.section h2{font-size:22px;color:var(--primary-dark);border-bottom:2px solid var(--accent);padding-bottom:8px;margin-bottom:18px}
+.section h3{font-size:17px;color:var(--primary-dark);margin:22px 0 10px}
+.section h4{font-size:14px;color:var(--primary);margin:16px 0 8px;font-weight:600}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+thead tr{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff}
+th{padding:12px 14px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr{transition:background .2s}
+tbody tr:nth-child(even){background:#f8fafc}
+tbody tr:hover{background:#eef2ff}
+
+/* Alerts */
+.alert{border-radius:10px;padding:16px 20px;margin:18px 0;font-size:13px;line-height:1.6}
+.alert-note{background:#dbeafe;color:#1e40af;border-left:4px solid #60a5fa}
+.alert-tip{background:#d1fae5;color:#065f46;border-left:4px solid #34d399}
+.alert-important{background:#fef3c7;color:#92400e;border-left:4px solid #fbbf24}
+.alert-caution{background:#fee2e2;color:#991b1b;border-left:4px solid #f87171}
+.alert strong{display:block;margin-bottom:4px;font-size:14px}
+
+/* Collapsible */
+.collapsible{cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px}
+.collapsible::before{content:'▶';font-size:10px;transition:transform .3s;display:inline-block}
+.collapsible.open::before{transform:rotate(90deg)}
+.collapsible-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.collapsible-content.open{max-height:5000px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
+.stat-card{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:14px;padding:22px 20px;text-align:center;transition:transform .2s}
+.stat-card:hover{transform:translateY(-4px)}
+.stat-card .num{font-size:32px;font-weight:800;display:block}
+.stat-card .label{font-size:12px;opacity:.8;margin-top:4px}
+
+/* Progress bars */
+.progress-row{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px}
+.progress-bar{flex:1;height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden}
+.progress-fill{height:100%;border-radius:5px;transition:width 1.5s ease;width:0}
+
+/* Timeline */
+.timeline{position:relative;padding-left:30px;margin:20px 0}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--primary),var(--success))}
+.timeline-item{position:relative;margin-bottom:24px;padding:16px 20px;background:#f8fafc;border-radius:10px;border:1px solid var(--border)}
+.timeline-item::before{content:'';position:absolute;left:-25px;top:20px;width:13px;height:13px;border-radius:50%;background:var(--primary);border:3px solid #fff;box-shadow:0 0 0 2px var(--primary)}
+.timeline-item h4{color:var(--primary-dark);margin:0 0 6px;font-size:15px}
+.timeline-item .phase-tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;color:#fff;margin-bottom:8px}
+.phase1{background:var(--primary)}
+.phase2{background:#8b5cf6}
+.phase3{background:var(--success)}
+
+/* Print */
+.print-bar{position:fixed;bottom:20px;right:20px;z-index:999}
+.print-btn{background:linear-gradient(135deg,#6366f1,#4338ca);color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,.4);font-family:inherit;transition:transform .2s}
+.print-btn:hover{transform:translateY(-2px)}
+@media print{.print-bar,.toc{display:none}.section{opacity:1!important;transform:none!important;break-inside:avoid;box-shadow:none;border:1px solid #ddd}.cover{break-after:page}body{background:#fff}.container{padding:0}}
+
+ul,ol{padding-left:22px;margin:8px 0}
+li{margin-bottom:5px}
+strong{color:var(--primary-darker)}
+blockquote{border-left:4px solid var(--accent);padding:12px 18px;background:#eef2ff;border-radius:0 8px 8px 0;margin:14px 0;font-style:italic;color:#3730a3}
+a{color:var(--primary)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head><body>
+
+<!-- COVER -->
+<div class="cover">
+  <h1>AI Transformation Strategy</h1>
+  <div class="subtitle">MissPompadour GmbH — Board-Level Strategic Roadmap</div>
+  <div class="meta"><span>📅 March 2026</span><span>🔒 CONFIDENTIAL</span><span>📄 Board Use Only</span></div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📑 Table of Contents</h2>
+  <ol>
+    <li><a href="#exec">Executive Summary</a></li>
+    <li><a href="#why">The AI Imperative — Why Now</a></li>
+    <li><a href="#profile">Company Profile & Strategic Context</a></li>
+    <li><a href="#maturity">AI Maturity Assessment</a></li>
+    <li><a href="#depts">Department-by-Department AI Plan (17 Use Cases)</a></li>
+    <li><a href="#arch">Technology Architecture & Data Strategy</a></li>
+    <li><a href="#roadmap">24-Month Implementation Roadmap</a></li>
+    <li><a href="#finance">Financial Model & ROI</a></li>
+    <li><a href="#risk">Governance, Risk & Compliance</a></li>
+    <li><a href="#change">Organizational Change Management</a></li>
+    <li><a href="#kpi">KPI Dashboard</a></li>
+    <li><a href="#actions">Immediate Board Actions</a></li>
+  </ol>
+</div>
+
+<!-- ════════ 1. EXECUTIVE SUMMARY ════════ -->
+<div class="section" id="exec">
+  <h2>1. Executive Summary</h2>
+  <p>MissPompadour has scaled from a Regensburg concept store to a <strong>€20M-turnover D2C paint leader</strong> in under six years. The company's moat — a fiercely loyal, 90%-female community of <strong>1M+ social followers</strong>, <strong>100k Facebook group members</strong>, and <strong>200k+ app downloads</strong> — is a data goldmine that remains largely untapped by AI.</p>
+  <div class="stats">
+    <div class="stat-card"><span class="num">€20M</span><span class="label">Revenue (2024)</span></div>
+    <div class="stat-card"><span class="num">60%+</span><span class="label">YoY Growth</span></div>
+    <div class="stat-card"><span class="num">140</span><span class="label">Employees</span></div>
+    <div class="stat-card"><span class="num">1M+</span><span class="label">Community Reach</span></div>
+  </div>
+  <div class="alert alert-important"><strong>⚠️ Central Thesis</strong>MissPompadour's community-first DNA makes it <em>uniquely positioned</em> to extract outsized value from AI — more so than any traditional paint company. The data from WhatsApp conversations, App engagement, social interactions, and project photos is a proprietary competitive advantage that, once AI-activated, will be nearly impossible for incumbents to replicate.</div>
+  <table>
+    <thead><tr><th>Dimension</th><th>Current State</th><th>AI-Enabled Future</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Revenue per Customer</strong></td><td>One-time project purchases</td><td>Predictive lifetime value management with recurring engagement</td></tr>
+      <tr><td><strong>Customer Support</strong></td><td>6-day manual advisory (WhatsApp, email, phone)</td><td>24/7 AI-augmented advisory with human escalation</td></tr>
+      <tr><td><strong>Marketing</strong></td><td>Community-driven before/after content</td><td>Hyper-personalized AI-generated inspiration at individual level</td></tr>
+      <tr><td><strong>Product Discovery</strong></td><td>Browse-based catalog with manual color advice</td><td>AI room visualizer + conversational project builder</td></tr>
+      <tr><td><strong>Supply Chain</strong></td><td>Reactive ordering from Laaber facility</td><td>Predictive demand sensing (weather, campaigns, virality)</td></tr>
+      <tr><td><strong>International</strong></td><td>Manual localization per market</td><td>AI-powered multilingual content, support, cultural adaptation</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Expected 3-year financial impact:</strong> €8–12M incremental revenue; 15–20% improvement in operating margin.</p>
+</div>
+
+<!-- ════════ 2. WHY AI — THE IMPERATIVE ════════ -->
+<div class="section" id="why">
+  <h2>2. The AI Imperative — Why MissPompadour Must Act Now</h2>
+
+  <h3>2.1 The Market is Shifting — Fast</h3>
+  <p>The global AI in retail market is projected to reach <strong>$31B by 2028</strong>. Every major e-commerce player — from Amazon to Zalando — has moved AI from "innovation lab" to core operations. In the home and garden vertical specifically:</p>
+  <ul>
+    <li><strong>Houzz</strong> has deployed AI-powered room visualization, receiving 10M+ monthly uses</li>
+    <li><strong>Sherwin-Williams & Benjamin Moore</strong> offer AI color matching from uploaded photos</li>
+    <li><strong>Wayfair</strong> uses AI for hyper-personalized product recommendations, driving a 25% uplift in conversion</li>
+  </ul>
+  <p>MissPompadour's direct competitors in the DACH D2C space will adopt these technologies within 12–18 months. <strong>The window for first-mover advantage is closing.</strong></p>
+
+  <h3>2.2 Five Strategic Reasons AI is Non-Negotiable</h3>
+  <table>
+    <thead><tr><th>#</th><th>Reason</th><th>Business Impact</th><th>Risk of Inaction</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td><strong>Scale Without Proportional Headcount</strong><br>At 60%+ growth, adding support staff linearly is unsustainable. AI enables 3× capacity without 3× cost.</td><td>Operating margin improvement of 5–8pp</td><td>Margin compression as revenue scales; inability to maintain advisory quality</td></tr>
+      <tr><td><strong>2</strong></td><td><strong>Defend the Community Moat</strong><br>Your 100k Facebook group and 1M followers generate massive data. If you don't use AI to activate this data, a competitor eventually will — by building similar communities with AI-powered engagement.</td><td>Deepen customer lock-in; increase switching costs</td><td>Community insights remain anecdotal; no structural advantage from data</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>Crack the Color Confidence Barrier</strong><br>The #1 reason customers abandon online paint purchases is uncertainty about how colors look in their space. AI visualization eliminates this barrier entirely.</td><td>20%+ conversion rate uplift</td><td>Continued high cart abandonment; customers revert to in-store sampling at competitors</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>Enable Pan-European Expansion Efficiently</strong><br>Expanding to NL, FR, IT, ES requires multilingual support, localized content, and culturally adapted marketing. AI makes this 10× cheaper than manual localization.</td><td>Accelerated market entry; €5M+ addressable market per country</td><td>Slow, expensive expansion; loss of EU opportunity to faster-moving competitors</td></tr>
+      <tr><td><strong>5</strong></td><td><strong>Investor & Valuation Expectations</strong><br>FURE Capital's investment at 3× performance signals growth expectations. AI-driven revenue acceleration and margin improvement directly increase enterprise value for future funding rounds or exit.</td><td>Higher valuation multiples (AI-enabled D2C commands 8–12× vs. 4–6× traditional)</td><td>Stagnating growth story; lower valuation in next funding round</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 The Cost of Waiting</h3>
+  <div class="alert alert-caution"><strong>🔴 Every 6-Month Delay Costs ~€1.5M</strong>Based on conservative modeling, each 6-month delay in AI deployment results in approximately €1.5M in foregone revenue uplift and efficiency savings. Over a 2-year delay scenario, the cumulative opportunity cost exceeds €8M — nearly half of current annual revenue.</div>
+
+  <h3>2.4 MissPompadour's Unique AI Advantage</h3>
+  <p>Unlike traditional paint companies that sell through retailers and have <em>zero direct customer data</em>, MissPompadour owns the entire data value chain:</p>
+  <div class="mermaid">
+graph LR
+    A["📱 App Behavior<br/>60k daily opens"] --> E["🧠 AI Engine"]
+    B["💬 WhatsApp/Email<br/>Advisory Logs"] --> E
+    C["👥 Facebook Group<br/>100k members"] --> E
+    D["🛒 Purchase Data<br/>Surface types, colors"] --> E
+    E --> F["🎯 Personalization"]
+    E --> G["🔮 Prediction"]
+    E --> H["🤖 Automation"]
+    E --> I["💡 Innovation"]
+    style E fill:#6366f1,color:#fff,stroke:none
+    style F fill:#818cf8,color:#fff,stroke:none
+    style G fill:#818cf8,color:#fff,stroke:none
+    style H fill:#818cf8,color:#fff,stroke:none
+    style I fill:#818cf8,color:#fff,stroke:none
+  </div>
+  <p>This vertically integrated data ownership is <strong>MissPompadour's most underutilized strategic asset</strong>. AI is the key to unlocking it.</p>
+</div>
+
+<!-- ════════ 3. COMPANY PROFILE ════════ -->
+<div class="section" id="profile">
+  <h2>3. Company Profile & Strategic Context</h2>
+  <h3>3.1 Company Overview</h3>
+  <table>
+    <thead><tr><th>Attribute</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Founded</strong></td><td>2019</td></tr>
+      <tr><td><strong>Founders</strong></td><td>Astrid Reintjes (CEO — Product), Erik Reintjes (Co-MD — Marketing/Sales), Niklas Lütteken (CTO — Tech, Helsinki)</td></tr>
+      <tr><td><strong>Headquarters</strong></td><td>Germany (Operations: Laaber; Tech: Helsinki)</td></tr>
+      <tr><td><strong>Funding</strong></td><td>€1.7M from FURE Capital (Aug 2022) — current performance 3×</td></tr>
+      <tr><td><strong>Revenue (2024)</strong></td><td>€20M — <em>Focus Wachstumschampion 2025</em></td></tr>
+      <tr><td><strong>Growth</strong></td><td>60%+ YoY projected by mid-2025</td></tr>
+      <tr><td><strong>Employees</strong></td><td>~130–140</td></tr>
+      <tr><td><strong>Customer Base</strong></td><td>~90% female, aged 30–50</td></tr>
+      <tr><td><strong>Markets</strong></td><td>DACH (DE, AT, CH), expanding NL & broader EU</td></tr>
+      <tr><td><strong>Products</strong></td><td>90+ proprietary shades, 400+ total; wall paint, chalk paint, varnish, tile paint, accessories, wallpaper</td></tr>
+      <tr><td><strong>Channels</strong></td><td>Own webshop, App (200k+ downloads, 60k daily opens), marketplaces, social</td></tr>
+      <tr><td><strong>Sustainability</strong></td><td>Zero/low VOC, plastic-free packaging, DHL GoGreen, DE/NL production</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Competitive Landscape</h3>
+  <table>
+    <thead><tr><th>Competitor Type</th><th>AI Readiness</th><th>MissPompadour Advantage</th></tr></thead>
+    <tbody>
+      <tr><td>Legacy paint brands (Alpina, Schöner Wohnen)</td><td>🔴 Low — retail-dependent, no direct data</td><td>Full D2C data ownership</td></tr>
+      <tr><td>Hardware retailers (OBI, Hornbach)</td><td>🟡 Medium — investing in apps, but generic</td><td>Niche community depth; paint-specific expertise</td></tr>
+      <tr><td>Int'l D2C paint (Farrow & Ball, Annie Sloan)</td><td>🟡 Low-Medium — premium, limited tech</td><td>App + community ecosystem already built</td></tr>
+      <tr><td>Tech-native home decor (Houzz, Pinterest)</td><td>🟢 High — but marketplace only</td><td>Vertically integrated: brand + product + community</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 The Community-Commerce Flywheel</h3>
+  <div class="mermaid">
+graph TD
+    A["🌟 Community Inspiration"] --> B["🎨 Color Discovery"]
+    B --> C["🛒 Purchase"]
+    C --> D["🖌️ DIY Project"]
+    D --> E["📸 Share Before/After"]
+    E --> A
+    style A fill:#6366f1,color:#fff,stroke:none
+    style B fill:#818cf8,color:#fff,stroke:none
+    style C fill:#a78bfa,color:#fff,stroke:none
+    style D fill:#c4b5fd,color:#1e1b4b,stroke:none
+    style E fill:#ddd6fe,color:#1e1b4b,stroke:none
+  </div>
+  <div class="alert alert-tip"><strong>💡 Key Insight</strong>MissPompadour's deliberate avoidance of hardware retail (Bauhaus, OBI) means <strong>100% of customer data flows through owned channels</strong> — a massive structural advantage for AI.</div>
+</div>
+
+<!-- ════════ 4. AI MATURITY ════════ -->
+<div class="section" id="maturity">
+  <h2>4. AI Maturity Assessment</h2>
+  <p>Before deploying AI, we assess MissPompadour's current readiness across six dimensions:</p>
+  <div class="mermaid">
+graph LR
+    L1["Level 1<br/>Ad Hoc"] --> L2["Level 2<br/>Aware"]
+    L2 --> L3["Level 3<br/>Operational"]
+    L3 --> L4["Level 4<br/>Integrated"]
+    L4 --> L5["Level 5<br/>Transformative"]
+    style L2 fill:#f59e0b,color:#000,stroke:#f59e0b
+    style L4 fill:#22c55e,color:#fff,stroke:#22c55e
+  </div>
+  <p style="text-align:center;font-size:13px;color:var(--muted)">🟡 Current state &nbsp;&nbsp; 🟢 24-month target</p>
+
+  <div style="margin-top:20px">
+    <div class="progress-row"><span style="width:160px">Data Infrastructure</span><div class="progress-bar"><div class="progress-fill" data-width="40%" style="background:var(--warn)"></div></div><span>2 → 4</span></div>
+    <div class="progress-row"><span style="width:160px">AI/ML Capabilities</span><div class="progress-bar"><div class="progress-fill" data-width="20%" style="background:var(--danger)"></div></div><span>1 → 3</span></div>
+    <div class="progress-row"><span style="width:160px">Personalization</span><div class="progress-bar"><div class="progress-fill" data-width="40%" style="background:var(--warn)"></div></div><span>2 → 4</span></div>
+    <div class="progress-row"><span style="width:160px">Process Automation</span><div class="progress-bar"><div class="progress-fill" data-width="40%" style="background:var(--warn)"></div></div><span>2 → 3</span></div>
+    <div class="progress-row"><span style="width:160px">AI Governance</span><div class="progress-bar"><div class="progress-fill" data-width="20%" style="background:var(--danger)"></div></div><span>1 → 3</span></div>
+    <div class="progress-row"><span style="width:160px">Org Readiness</span><div class="progress-bar"><div class="progress-fill" data-width="40%" style="background:var(--warn)"></div></div><span>2 → 4</span></div>
+  </div>
+</div>
+
+<!-- ════════ 5. DEPARTMENT USE CASES ════════ -->
+<div class="section" id="depts">
+  <h2>5. Department-by-Department AI Transformation (17 Use Cases)</h2>
+
+  <h3>5.1 🎯 Marketing & Brand</h3>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">M1: AI Content Generation at Scale</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Creating unique on-brand social content is manual, slow, and bottlenecked by a small creative team.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Generative AI fine-tuned on MissPompadour's brand voice and 100k+ community project photos to auto-generate social posts, email campaigns, blog articles, and video scripts.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Fine-tune a multimodal LLM on style guide, past campaigns, and top community content. Integrate with scheduling tools.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>3× increase in content output; maintain or improve engagement rate per post</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 1 — Months 2–5</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">M2: Predictive Trend Intelligence</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Trend identification (e.g., 'Blue with Bubbles' as 2026 trend color) is intuition-driven and reactive.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Social listening AI analyzing Pinterest, TikTok, Instagram, and design publications to detect rising color/style trends 3–6 months before peak.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Deploy NLP + computer vision scanning social platforms. Feed signals into product development and campaigns.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>Trend lead time from ~2 months to ~6 months</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 7–10</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">M3: Hyper-Personalized Campaign Orchestration</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Email and push campaigns are segment-based, not individual-level.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>ML-driven marketing automation that personalizes timing, channel, creative, and offer per individual based on purchase history, app behavior, and project stage.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Integrate unified CDP with AI personalization engine. A/B test AI vs. manual campaigns.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>25% improvement in email open rates; 15% in conversion</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 8–12</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">M4: TV & Media Attribution AI</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>MissPompadour invested in niche TV (Sixx, Heimatkanal) but struggles to connect airtime to digital conversions.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Multi-touch attribution model correlating TV air times with web/app traffic spikes and conversions.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Deploy attribution platform with TV log ingestion and real-time digital signal matching.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>Measurable ROAS on TV spend; 10–15% budget reallocation to top slots</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 1 — Months 3–6</td></tr>
+    </table>
+  </div>
+</div>
+
+  <h3>5.2 💬 Customer Success & Advisory</h3>
+  <div class="alert alert-note"><strong>ℹ️ Strategic Context</strong>This is the crown jewel department. MissPompadour's 6-day/week, multi-channel advisory is the #1 brand differentiator. AI must enhance it without diluting human warmth.</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">CS1: AI Advisory Co-Pilot (Internal Tool) ⭐ TOP PRIORITY</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Advisors spend significant time looking up product compatibility, calculating paint quantities, and drafting responses.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Internal AI co-pilot that: (a) auto-drafts empathetic, brand-aligned responses, (b) retrieves product/surface compatibility instantly, (c) calculates quantities from room dimensions. Advisors review and personalize.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Build RAG system trained on product database, FAQ knowledge base, and anonymized historical conversations.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>40% reduction in response time; 30% increase in advisor capacity</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 1 — Months 2–5</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">CS2: Intelligent Triage & Routing</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>All queries are manually triaged. Simple questions consume same advisor time as complex projects.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>AI intent classification categorizing queries by complexity and topic. Tier-1 auto-resolved; complex queries routed to specialists with pre-populated context.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>NLP classifier trained on historical ticket data with human QA spot-checks on auto-responses.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>50% Tier-1 auto-resolution; 25% reduction in handle time for complex queries</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 1–2 — Months 4–8</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">CS3: Proactive Lifecycle Outreach</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Post-purchase engagement is reactive. No systematic follow-up to ensure project success or drive repeat purchase.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Predictive lifecycle AI triggering personalized follow-ups (e.g., 7 days after primer: 'Ready for your top coat?'), churn detection, and next-best-action recommendations.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>ML model on purchase sequences, app re-engagement patterns, and historical repurchase intervals.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>20% increase in repeat purchase rate within 6 months</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 8–11</td></tr>
+    </table>
+  </div>
+</div>
+
+  <h3>5.3 📱 E-Commerce & App</h3>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">EC1: AI Room Visualizer ⭐ FLAGSHIP</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Customers struggle to imagine how a color will look in their specific room — the #1 barrier to online paint purchase.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Generative AI room visualizer in the App. Customers upload a room photo; AI re-renders walls/furniture in any MissPompadour shade with realistic lighting.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Partner with AI visualization provider (e.g., Wizart.ai) or build with diffusion models fine-tuned on MissPompadour's palette. Integrate into App + web.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>20% conversion uplift for visualizer users; 30% reduction in color returns</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 6–10</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">EC2: Conversational Project Builder</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Customers don't know all products needed for a project. Static 'project sets' don't adapt.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Conversational AI asking guided questions ('What surface? Indoor/outdoor? What finish?') to dynamically build a complete shopping basket with quantities and instructions.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Intent-driven dialogue system integrated with product catalog and compatibility rules.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>25% increase in AOV for builder users</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 7–11</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">EC3: Semantic & Visual Search</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Keyword search fails for natural queries like 'something blue-green for my bathroom'.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Semantic search + visual search. Natural language color descriptions or uploaded inspiration photos mapped to closest MissPompadour shades.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Vector embedding search over product catalog with image similarity model.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>15% improvement in search-to-cart conversion</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 1 — Months 4–6</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">EC4: Dynamic Personalized Storefront</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>All customers see identical homepage regardless of history.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>ML-driven personalization customizing App/web per user: featured colors, project-relevant content, complementary recommendations.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Adopt e-commerce personalization platform (e.g., Dynamic Yield) with custom model training.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>10% increase in session duration; 12% increase in products per session</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 9–12</td></tr>
+    </table>
+  </div>
+</div>
+
+  <h3>5.4 📦 Supply Chain & Logistics</h3>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">SC1: AI Demand Forecasting</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Spreadsheet-based forecasting → stockouts of trending colors or excess slow-movers.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>ML forecasting integrating: historical sales, weather (painting is seasonal), campaign calendar, social virality signals, and trend data.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Time-series models (Prophet/LightGBM) with external data feeds. Deployed as dashboard for operations team.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>25% fewer stockouts; 15% less excess inventory</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2 — Months 7–10</td></tr>
+    </table>
+  </div>
+</div>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">SC2: Intelligent Order Bundling & Routing</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Shipping costs and carbon footprint scale with small individual orders.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>AI-optimized order batching and warehouse slot allocation (co-purchased items placed adjacently).</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Operations research optimization models integrated with WMS and DHL GoGreen API.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>8% reduction in per-order shipping cost; measurable CO₂ reduction</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2–3 — Months 10–15</td></tr>
+    </table>
+  </div>
+</div>
+
+  <h3>5.5 🧪 Product Development</h3>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">PD1: AI Color Trend Forecasting</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>New shade development relies on founder intuition and competitor analysis.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Combine trend intelligence (M2) with community sentiment analysis (NLP on Facebook group, App comments) to identify palette gaps and predict resonance of new shades.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>NLP pipeline on community data + market sizing model for candidate colors.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>New shade launch success rate: 60% → 80%</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 2–3 — Months 10–16</td></tr>
+    </table>
+  </div>
+</div>
+
+  <h3>5.6 💰 Finance & Pricing</h3>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">F1: Dynamic Pricing & Promotion Optimization</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Pricing is static. Promotions are calendar-driven, not data-driven.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>AI pricing engine optimizing product and bundle pricing based on elasticity, competitors, seasonality, and willingness-to-pay signals.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Price elasticity modeling + competitor monitoring + A/B testing framework.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>3–5% gross margin improvement without volume decline</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 3 — Months 14–18</td></tr>
+    </table>
+  </div>
+</div>
+
+  <h3>5.7 👥 Human Resources</h3>
+  
+<div style="margin:16px 0">
+  <h4 class="collapsible" onclick="toggleCollapsible(this)">HR1: Internal Knowledge AI</h4>
+  <div class="collapsible-content">
+    <table>
+      <tr><td style="width:130px;font-weight:600;color:var(--primary)">Problem</td><td>Onboarding new advisors requires weeks training on products, surface compatibility, and brand voice.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">AI Solution</td><td>Internal AI knowledge assistant queryable in natural language ('Can Alles streichen Lack be used on PVC?'). Leverages the RAG system from CS1.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Implementation</td><td>Extend CS1 RAG system with internal training materials and product specs.</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">KPI Target</td><td>50% reduction in onboarding ramp-up time</td></tr>
+      <tr><td style="font-weight:600;color:var(--primary)">Timeline</td><td>Phase 1 — Months 3–5</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ════════ 6. ARCHITECTURE ════════ -->
+<div class="section" id="arch">
+  <h2>6. Technology Architecture & Data Strategy</h2>
+  <h3>6.1 Target Architecture</h3>
+  <div class="mermaid">
+graph TB
+    subgraph Sources["📥 Data Sources"]
+        A1["Webshop<br/>Shopware"]
+        A2["MissPompadour App"]
+        A3["CRM / Email"]
+        A4["WhatsApp / Social"]
+        A5["Facebook Group"]
+        A6["ERP / Inventory"]
+    end
+    subgraph Platform["☁️ Unified Data Platform"]
+        B1["Data Lake"]
+        B2["Data Warehouse"]
+        B3["Customer Data Platform"]
+        B4["Feature Store"]
+    end
+    subgraph AI["🧠 AI/ML Layer"]
+        C1["ML Training Pipeline"]
+        C2["Model Registry"]
+        C3["Real-time Inference"]
+        C4["GenAI / LLM Services"]
+    end
+    subgraph Apps["⚡ AI Applications"]
+        D1["Advisory Co-Pilot"]
+        D2["Room Visualizer"]
+        D3["Personalization"]
+        D4["Demand Forecaster"]
+        D5["Content Generator"]
+    end
+    A1 & A2 & A3 & A4 & A5 & A6 --> B1
+    B1 --> B2
+    B2 --> B3
+    B2 --> B4
+    B3 --> C1
+    B4 --> C1
+    C1 --> C2
+    C2 --> C3
+    C4 --> D1
+    C4 --> D5
+    C3 --> D2
+    C3 --> D3
+    C3 --> D4
+    style AI fill:#eef2ff,stroke:#6366f1
+  </div>
+
+  <h3>6.2 Build vs. Buy</h3>
+  <table>
+    <thead><tr><th>Capability</th><th>Recommendation</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td>Data Platform / CDP</td><td>🛒 <strong>Buy</strong></td><td>Managed cloud (GCP/AWS). No need to build.</td></tr>
+      <tr><td>Advisory Co-Pilot (RAG)</td><td>🔧 <strong>Build</strong></td><td>Core IP. Must use proprietary data and brand voice.</td></tr>
+      <tr><td>Room Visualizer</td><td>🤝 <strong>Partner + Customize</strong></td><td>License proven engine, fine-tune with color data.</td></tr>
+      <tr><td>Content Generation</td><td>🛒 <strong>Buy + Fine-tune</strong></td><td>Commercial GenAI APIs fine-tuned on brand guidelines.</td></tr>
+      <tr><td>Demand Forecasting</td><td>🔧 <strong>Build</strong></td><td>Proprietary model with unique signals (virality, weather).</td></tr>
+      <tr><td>Personalization Engine</td><td>🛒 <strong>Buy + Configure</strong></td><td>Proven platform (Dynamic Yield, Bloomreach).</td></tr>
+      <tr><td>Fraud Detection</td><td>🛒 <strong>Buy</strong></td><td>Standard commercial solution. Not a differentiator.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════ 7. ROADMAP ════════ -->
+<div class="section" id="roadmap">
+  <h2>7. 24-Month Implementation Roadmap</h2>
+  <div class="mermaid">
+gantt
+    title MissPompadour AI Transformation — 24 Month Plan
+    dateFormat  YYYY-MM-DD
+    axisFormat  %b %Y
+    section Phase 1 — Quick Wins (M1-6)
+    Data Audit and Lake Setup           :p1a, 2026-04-01, 60d
+    Advisory Co-Pilot MVP               :p1b, 2026-04-15, 90d
+    Internal Knowledge AI               :p1c, 2026-05-01, 60d
+    AI Content Generation Pilot         :p1d, 2026-05-01, 75d
+    Semantic Search MVP                 :p1e, 2026-06-01, 60d
+    TV Attribution Model                :p1f, 2026-05-15, 45d
+    section Phase 2 — Core AI (M6-12)
+    Room Visualizer Development         :p2a, 2026-08-01, 120d
+    Conversational Project Builder      :p2b, 2026-09-01, 105d
+    Demand Forecasting Model            :p2c, 2026-09-15, 90d
+    Personalized CRM Lifecycle AI       :p2d, 2026-10-01, 90d
+    Intelligent Triage and Routing      :p2e, 2026-08-15, 75d
+    Dynamic Storefront                  :p2f, 2026-11-01, 75d
+    section Phase 3 — Scale (M12-24)
+    Multilingual EU Expansion           :p3a, 2027-04-01, 150d
+    Dynamic Pricing Engine              :p3b, 2027-04-15, 90d
+    AI Color Trend Forecasting          :p3c, 2027-04-01, 120d
+    Supply Chain Optimization           :p3d, 2027-06-01, 90d
+  </div>
+
+  <h3>Phase Summary</h3>
+  <table>
+    <thead><tr><th>Phase</th><th>Timeline</th><th>Investment</th><th>Key Deliverables</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Phase 1 — Quick Wins</strong></td><td>Apr–Sep 2026</td><td>€300–400K</td><td>Data infrastructure; Advisory Co-Pilot; Content AI; Knowledge Base; Semantic Search</td></tr>
+      <tr><td><strong>Phase 2 — Core AI</strong></td><td>Oct 2026–Mar 2027</td><td>€500–700K</td><td>Room Visualizer; Project Builder; Demand Forecasting; Lifecycle AI; Personalization</td></tr>
+      <tr><td><strong>Phase 3 — Scale</strong></td><td>Apr 2027–Mar 2028</td><td>€400–600K</td><td>Multilingual expansion; Dynamic Pricing; Color AI; Supply chain optimization</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════ 8. FINANCIAL MODEL ════════ -->
+<div class="section" id="finance">
+  <h2>8. Financial Model & ROI Projections</h2>
+  <h3>8.1 Investment Summary</h3>
+  <table>
+    <thead><tr><th>Category</th><th>Year 1</th><th>Year 2</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td>AI/ML Engineering Team (4–6 FTEs)</td><td>€400K</td><td>€450K</td><td>€850K</td></tr>
+      <tr><td>Cloud Infrastructure & Data Platform</td><td>€100K</td><td>€120K</td><td>€220K</td></tr>
+      <tr><td>Software Licenses & API Costs</td><td>€80K</td><td>€100K</td><td>€180K</td></tr>
+      <tr><td>External Partners (Visualizer, etc.)</td><td>€120K</td><td>€80K</td><td>€200K</td></tr>
+      <tr><td>Change Management & Training</td><td>€50K</td><td>€30K</td><td>€80K</td></tr>
+      <tr><td style="font-weight:700;background:#eef2ff"><strong>Total Investment</strong></td><td style="font-weight:700;background:#eef2ff"><strong>€750K</strong></td><td style="font-weight:700;background:#eef2ff"><strong>€780K</strong></td><td style="font-weight:700;background:#eef2ff"><strong>€1.53M</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.2 Projected Returns</h3>
+  <table>
+    <thead><tr><th>Revenue / Savings Driver</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead>
+    <tbody>
+      <tr><td>Conversion rate uplift (Visualizer, Search, Personalization)</td><td>—</td><td>€1.2M</td><td>€2.5M</td></tr>
+      <tr><td>AOV increase (Project Builder, Recommendations)</td><td>€200K</td><td>€600K</td><td>€1.0M</td></tr>
+      <tr><td>Support cost avoidance (Co-Pilot, Triage)</td><td>€150K</td><td>€300K</td><td>€400K</td></tr>
+      <tr><td>Reduced returns (Better color confidence)</td><td>€50K</td><td>€150K</td><td>€250K</td></tr>
+      <tr><td>Supply chain savings (Forecasting, routing)</td><td>—</td><td>€200K</td><td>€400K</td></tr>
+      <tr><td>Marketing efficiency (Attribution, Personalization)</td><td>€100K</td><td>€250K</td><td>€400K</td></tr>
+      <tr><td>Repeat purchase uplift (Lifecycle AI)</td><td>—</td><td>€300K</td><td>€700K</td></tr>
+      <tr><td style="font-weight:700;background:#d1fae5"><strong>Total Incremental Value</strong></td><td style="font-weight:700;background:#d1fae5"><strong>€500K</strong></td><td style="font-weight:700;background:#d1fae5"><strong>€3.0M</strong></td><td style="font-weight:700;background:#d1fae5"><strong>€5.65M</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="alert alert-tip"><strong>💡 Cumulative 3-Year ROI: ~500%</strong>The investment fully pays back within 18 months. Year 3 annual impact exceeds the entire 2-year investment.</div>
+</div>
+
+<!-- ════════ 9. RISK ════════ -->
+<div class="section" id="risk">
+  <h2>9. Governance, Risk & Compliance</h2>
+  <table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GDPR violation</strong> from customer data in AI training</td><td>🔴 Critical</td><td>🟡 Medium</td><td>Privacy-by-design; anonymization pipeline; external GDPR audit before co-pilot launch</td></tr>
+      <tr><td><strong>Brand voice degradation</strong> from AI content</td><td>🟠 High</td><td>🟡 Medium</td><td>Human-in-the-loop for all customer-facing AI in Phase 1. Gradual autonomy after benchmarks.</td></tr>
+      <tr><td><strong>Employee resistance</strong> / fear of job loss</td><td>🟠 High</td><td>🔴 High</td><td>Transparent comms; position AI as "superpower"; upskilling programs</td></tr>
+      <tr><td><strong>Insufficient data quality</strong></td><td>🟠 High</td><td>🟡 Medium</td><td>Phase 1 prioritizes data infrastructure before advanced AI. Gated progression.</td></tr>
+      <tr><td><strong>AI hallucination</strong> in recommendations</td><td>🟠 High</td><td>🟡 Medium</td><td>RAG with verified product DB as ground truth; automated fact-checking</td></tr>
+      <tr><td><strong>Vendor lock-in</strong></td><td>🟡 Medium</td><td>🟡 Medium</td><td>Multi-cloud strategy; model-agnostic architecture; contractual flexibility</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Governance Structure</h3>
+  <table>
+    <thead><tr><th>Role</th><th>Responsibility</th><th>Recommended Owner</th></tr></thead>
+    <tbody>
+      <tr><td><strong>AI Sponsor</strong></td><td>Executive accountability, budget, board reporting</td><td>Erik or Astrid Reintjes</td></tr>
+      <tr><td><strong>AI Product Lead</strong></td><td>Prioritization, roadmap, cross-functional coordination</td><td>New hire or promoted internal</td></tr>
+      <tr><td><strong>Data Privacy Officer</strong></td><td>GDPR compliance, consent management</td><td>Legal/compliance (+ external counsel)</td></tr>
+      <tr><td><strong>ML Engineering Lead</strong></td><td>Architecture, model dev, MLOps</td><td>New hire in Helsinki (with CTO Niklas)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════ 10. CHANGE MANAGEMENT ════════ -->
+<div class="section" id="change">
+  <h2>10. Organizational Change Management</h2>
+  <div class="alert alert-note"><strong>ℹ️ Core Message</strong>"AI doesn't replace your job — it gives you superpowers to do your job brilliantly."</div>
+  <div class="timeline">
+    <div class="timeline-item"><span class="phase-tag phase1">Month 1</span><h4>CEO Town Hall</h4><p>Founder-led "Our AI vision and what it means for you" — all 140 employees</p></div>
+    <div class="timeline-item"><span class="phase-tag phase1">Month 1–2</span><h4>Department Workshops</h4><p>"What AI can do for YOUR team" — hands-on sessions per department</p></div>
+    <div class="timeline-item"><span class="phase-tag phase1">Month 2–3</span><h4>AI Literacy Training</h4><p>Fundamentals of AI, prompt engineering, data privacy — all employees</p></div>
+    <div class="timeline-item"><span class="phase-tag phase2">Month 3–5</span><h4>Co-Pilot Beta Testing</h4><p>Volunteer advisors test the AI co-pilot; collect feedback and iterate</p></div>
+    <div class="timeline-item"><span class="phase-tag phase2">Month 6</span><h4>AI Champions Program</h4><p>One volunteer per department trained as power user and evangelist</p></div>
+    <div class="timeline-item"><span class="phase-tag phase3">Ongoing</span><h4>Monthly "AI Wins" Showcase</h4><p>Celebrate efficiency gains and creative uses across all teams</p></div>
+  </div>
+</div>
+
+<!-- ════════ 11. KPI DASHBOARD ════════ -->
+<div class="section" id="kpi">
+  <h2>11. KPI Dashboard — Quarterly Board Review</h2>
+  <table>
+    <thead><tr><th>KPI</th><th>Baseline</th><th>Phase 1</th><th>Phase 2</th><th>Phase 3</th></tr></thead>
+    <tbody>
+      <tr><td>AI-influenced revenue %</td><td>0%</td><td>5%</td><td>20%</td><td>40%</td></tr>
+      <tr><td>Avg. support response time</td><td>~2 hrs</td><td>1.2 hrs</td><td>45 min</td><td>30 min</td></tr>
+      <tr><td>Tier-1 auto-resolution rate</td><td>0%</td><td>30%</td><td>50%</td><td>60%</td></tr>
+      <tr><td>Conversion rate (web + app)</td><td>~2.5%</td><td>2.8%</td><td>3.5%</td><td>4.0%</td></tr>
+      <tr><td>Average order value</td><td>~€65</td><td>€68</td><td>€78</td><td>€85</td></tr>
+      <tr><td>Repeat purchase rate (6M)</td><td>~25%</td><td>27%</td><td>32%</td><td>38%</td></tr>
+      <tr><td>Content published / week</td><td>~10</td><td>25</td><td>40</td><td>50</td></tr>
+      <tr><td>Demand forecast accuracy</td><td>~70%</td><td>70%</td><td>82%</td><td>88%</td></tr>
+      <tr><td>Employee AI adoption</td><td>0%</td><td>40%</td><td>70%</td><td>90%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════ 12. BOARD ACTIONS ════════ -->
+<div class="section" id="actions">
+  <h2>12. Immediate Board Actions</h2>
+  <div class="alert alert-caution"><strong>🔴 Every month of delay extends the competitor catch-up window.</strong> The actions below should be executed within 30 days of board approval.</div>
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Owner</th><th>Deadline</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>Approve AI transformation budget (€750K Year 1)</td><td>Board / CFO</td><td>Week 2</td></tr>
+      <tr><td><strong>2</strong></td><td>Appoint AI Executive Sponsor from founding team</td><td>Founders</td><td>Week 1</td></tr>
+      <tr><td><strong>3</strong></td><td>Commission 4-week Technical Discovery Sprint</td><td>CTO Niklas Lütteken</td><td>Week 3</td></tr>
+      <tr><td><strong>4</strong></td><td>Begin recruitment for Head of AI / VP Data</td><td>HR / Founders</td><td>Week 2</td></tr>
+      <tr><td><strong>5</strong></td><td>GDPR readiness review for AI use of customer data</td><td>Legal / DPO</td><td>Week 4</td></tr>
+      <tr><td><strong>6</strong></td><td>CEO-led AI vision town hall for all employees</td><td>CEO Astrid Reintjes</td><td>Week 4</td></tr>
+      <tr><td><strong>7</strong></td><td>Select Advisory Co-Pilot as Phase 1 flagship project</td><td>Co-MD Erik Reintjes</td><td>Week 3</td></tr>
+    </tbody>
+  </table>
+  <br>
+  <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:40px"><em>This report has been prepared for the exclusive use of MissPompadour GmbH's Board of Directors.<br>All projections are based on publicly available data, industry benchmarks, and strategic assumptions.</em></p>
+</div>
+
+</div><!-- /container -->
+
+<!-- Print btn -->
+<div class="print-bar"><button class="print-btn" onclick="window.print()">⬇ Save as PDF</button></div>
+
+<script>
+// Initialize Mermaid
+mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#6366f1', primaryTextColor: '#fff', primaryBorderColor: '#4338ca', lineColor: '#94a3b8', sectionBkgColor: '#eef2ff', altSectionBkgColor: '#f8fafc', gridColor: '#e2e8f0', todayLineColor: '#ef4444', taskBkgColor: '#818cf8', taskTextColor: '#fff', activeTaskBkgColor: '#6366f1', doneTaskBkgColor: '#22c55e', taskBorderColor: '#4338ca', fontFamily: 'Inter' } });
+
+// Scroll-reveal sections
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+// Collapsible use-case tables
+function toggleCollapsible(el) {
+  el.classList.toggle('open');
+  const content = el.nextElementSibling;
+  content.classList.toggle('open');
+}
+// Open all by default
+document.querySelectorAll('.collapsible').forEach(c => { c.classList.add('open'); c.nextElementSibling.classList.add('open'); });
+
+// Animate progress bars on scroll
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.progress-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width;
+      });
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('#maturity').forEach(s => barObserver.observe(s));
+</script>
+</body></html>
